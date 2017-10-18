@@ -1,0 +1,28 @@
+{
+  "name": "effects-as-data-server",
+  "version": "1.0.0",
+  "description": "A simple server for effects-as-data",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/orourkedd/effects-as-data-server"
+  },
+  "author": "orourkedd",
+  "license": "MIT",
+  "dependencies": {
+    "effects-as-data": "^2.14.9",
+    "effects-as-data-universal": "^4.2.0",
+    "is-generator-function": "^1.0.6",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-cookie": "^1.0.0",
+    "koa-router": "^7.2.1"
+  },
+  "devDependencies": {
+    "isomorphic-fetch": "^2.2.1",
+    "jest": "^21.2.1"
+  }
+}
