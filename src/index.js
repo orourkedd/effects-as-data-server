@@ -26,7 +26,14 @@ function init(options) {
     router[method](path, async ctx => {
       const { query, params, headers, cookie: cookies } = ctx;
       const { body } = ctx.request;
-      const args = { query, params, body, headers, cookies, ctx };
+      const args = {
+        query,
+        params,
+        body,
+        headers,
+        cookies: cookies || {},
+        ctx
+      };
       let result;
       if (isGeneratorFunction(fn)) {
         result = await call(options.config || {}, handlers, fn, args);
