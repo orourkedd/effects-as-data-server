@@ -1,6 +1,6 @@
 {
   "name": "effects-as-data-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple server for effects-as-data",
   "main": "src/index.js",
   "scripts": {

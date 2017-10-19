@@ -41,7 +41,7 @@ function init(options) {
         result = await fn(args);
       }
       if (ctx.body === undefined && ctx.status === 404) {
-        ctx.status = result.status;
+        ctx.status = result.status || 200;
         ctx.headers = result.headers || ctx.headers;
         // set cookies
         result.cookies.forEach(([name, value, options]) => {
