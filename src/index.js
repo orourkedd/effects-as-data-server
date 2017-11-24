@@ -16,8 +16,8 @@ function init(options) {
   const app = new Koa();
   if (!options.disableHelmet) app.use(helmet(options.helmet));
   const router = koaRouter();
-  app.use(cookie(options.cookie));
-  app.use(bodyParser(options.bodyParser));
+  if (!options.disableCookie) app.use(cookie(options.cookie));
+  if (!options.disableBodyParser) app.use(bodyParser(options.bodyParser));
 
   // Combine handlers
   const handlers = Object.assign({}, universalHandlers, options.handlers || {});
