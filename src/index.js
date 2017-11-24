@@ -1,5 +1,8 @@
 const { call } = require("effects-as-data");
-const { handlers: universalHandlers } = require("effects-as-data-universal");
+const {
+  handlers: universalHandlers,
+  cmds
+} = require("effects-as-data-universal");
 const { send, notFound, notAuthorized } = require("./helpers");
 const bodyParser = require("koa-bodyparser");
 const cookie = require("koa-cookie").default;
@@ -11,7 +14,7 @@ const router = require("./router");
 
 function init(options) {
   const app = new Koa();
-  app.use(helmet(options.helmet));
+  if (!options.disableHelmet) app.use(helmet(options.helmet));
   const router = koaRouter();
   app.use(cookie(options.cookie));
   app.use(bodyParser(options.bodyParser));
@@ -96,9 +99,10 @@ function init(options) {
 }
 
 module.exports = {
+  cmds,
   init,
-  router,
-  send,
+  notAuthorized,
   notFound,
-  notAuthorized
+  router,
+  send
 };

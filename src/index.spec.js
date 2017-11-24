@@ -206,3 +206,18 @@ test("it should use a non EAD function which interacts directly with ctx", async
     foo: "bar"
   });
 });
+
+test("it should support custom middleware", async () => {
+  function middleware(ctx) {
+    ctx.body = { message: "foo" };
+  }
+  const { start, stop } = init({
+    port: 3000,
+    middleware: [middleware],
+    test: true // prevent printing of certain messages
+  });
+  await start();
+  const result = await get("http://localhost:3000/anything");
+  await stop();
+  expect(result).toEqual({ message: "foo" });
+});
