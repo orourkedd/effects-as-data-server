@@ -1,15 +1,17 @@
 const { call } = require("effects-as-data");
 const { handlers: universalHandlers } = require("effects-as-data-universal");
+const { send, notFound, notAuthorized } = require("./helpers");
 const bodyParser = require("koa-bodyparser");
 const cookie = require("koa-cookie").default;
+const helmet = require("koa-helmet");
 const isGeneratorFunction = require("is-generator-function");
 const Koa = require("koa");
 const koaRouter = require("koa-router");
 const router = require("./router");
-const { send } = require("./helpers");
 
 function init(options) {
   const app = new Koa();
+  app.use(helmet(options.helmet));
   const router = koaRouter();
   app.use(cookie(options.cookie));
   app.use(bodyParser(options.bodyParser));
@@ -18,7 +20,7 @@ function init(options) {
   const handlers = Object.assign({}, universalHandlers, options.handlers || {});
 
   // Mount middleware
-  if (options.middleware) options.middleware.forEach(m => app.use(m));
+  if (options.middleware) (options.middleware || []).forEach(m => app.use(m));
 
   // Mount routes
   for (let route in options.routes) {
@@ -40,15 +42,25 @@ function init(options) {
       } else {
         result = await fn(args);
       }
-      if (ctx.body === undefined && ctx.status === 404) {
-        ctx.status = result.status || 200;
-        ctx.headers = result.headers || ctx.headers;
-        // set cookies
-        result.cookies.forEach(([name, value, options]) => {
-          ctx.cookies.set(name, value, options);
-        });
-        ctx.body = result.body;
+
+      // If the function interacted with the context directly, do no further processing
+      if (ctx.body || ctx.status !== 404) return;
+
+      // Force the function to return some kind of body
+      if (result.body === undefined) {
+        throw new Error(
+          "`body` cannot be undefined.  Are you using the `send()` function?"
+        );
       }
+
+      ctx.status = result.status || 200;
+      ctx.headers = result.headers || ctx.headers;
+      // set cookies
+      for (let i = 0; i < (result.cookies || []).length; i++) {
+        const [name, value, options] = result.cookies[i];
+        ctx.cookies.set(name, value, options);
+      }
+      ctx.body = result.body;
     });
   }
 
@@ -86,5 +98,7 @@ function init(options) {
 module.exports = {
   init,
   router,
-  send
+  send,
+  notFound,
+  notAuthorized
 };

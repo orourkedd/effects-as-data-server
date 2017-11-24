@@ -10,7 +10,7 @@ test("it should handle a get request", async () => {
   const { start, stop } = init({
     port: 3000,
     routes: [router.get("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await get("http://localhost:3000/test/32?a=1&b=2", {
@@ -42,7 +42,7 @@ test("it should handle a put request", async () => {
   const { start, stop } = init({
     port: 3000,
     routes: [router.put("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await put(
@@ -79,7 +79,7 @@ test("it should handle a patch request", async () => {
   const { start, stop } = init({
     port: 3000,
     routes: [router.patch("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await patch(
@@ -116,7 +116,7 @@ test("it should handle a post request", async () => {
   const { start, stop } = init({
     port: 3000,
     routes: [router.post("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await post(
@@ -153,7 +153,7 @@ test("it should handle a delete request", async () => {
   const { start, stop } = init({
     port: 3000,
     routes: [router.delete("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await remove("http://localhost:3000/test/32?a=1&b=2", {
@@ -177,14 +177,14 @@ test("it should handle a delete request", async () => {
   });
 });
 
-test("it should use a normal function which interacts directly with ctx", async () => {
-  function* testRoute({ ctx, query, params, body, headers, cookies }) {
+test("it should use a non EAD function which interacts directly with ctx", async () => {
+  function testRoute({ ctx, query, params, body, headers, cookies }) {
     ctx.body = { message: "foo bar", query, params, body, headers, cookies };
   }
   const { start, stop } = init({
     port: 3000,
     routes: [router.get("/test/:id", testRoute)],
-    test: true
+    test: true // prevent printing of certain messages
   });
   await start();
   const result = await get("http://localhost:3000/test/32?a=1&b=2", {
