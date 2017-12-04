@@ -104,7 +104,7 @@ const { init, router } = require('effects-as-data-server');
 
 // Just a normal koa middleware function
 function helloWorld ({ ctx, body, query, params, headers, cookies }) {
-  ctx = 'hello world'
+  ctx.body = 'hello world'
 }
 
 const { start, stop } = init({
