@@ -22,10 +22,20 @@ function routeDelete(path, fn) {
   return route("delete", path, fn);
 }
 
+function routeHead(path, fn) {
+  return route("head", path, fn);
+}
+
+function routeOptions(path, fn) {
+  return route("options", path, fn);
+}
+
 module.exports = {
   get: routeGet,
   post: routePost,
   put: routePut,
   patch: routePatch,
-  delete: routeDelete
+  delete: routeDelete,
+  head: routeHead,
+  options: routeOptions
 };
