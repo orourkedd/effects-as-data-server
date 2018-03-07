@@ -1,4 +1,5 @@
-const { call } = require("effects-as-data");
+const { call } = require("effects-as-data/core");
+const { cmds: coreCmds, handlers: coreHandlers } = require("effects-as-data");
 const {
   handlers: universalHandlers,
   cmds
@@ -20,7 +21,7 @@ function init(options) {
   if (!options.disableBodyParser) app.use(bodyParser(options.bodyParser));
 
   // Combine handlers
-  const handlers = Object.assign({}, universalHandlers, options.handlers || {});
+  const handlers = Object.assign({}, coreHandlers, universalHandlers, options.handlers || {});
 
   // Mount middleware
   if (options.middleware) (options.middleware || []).forEach(m => app.use(m));
@@ -99,7 +100,7 @@ function init(options) {
 }
 
 module.exports = {
-  cmds,
+  cmds: Object.assign({}, coreCmds, cmds),
   init,
   notAuthorized,
   notFound,

@@ -1,6 +1,5 @@
-const { init, router, send } = require("./index");
+const { init, router, send, cmds } = require("./index");
 const { get, post, put, patch, remove } = require("./test-helpers");
-const { cmds } = require("effects-as-data-universal");
 
 test("it should handle a get request", async () => {
   function* testRoute({ query, params, body, headers, cookies }) {
