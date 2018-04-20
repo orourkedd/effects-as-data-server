@@ -1,9 +1,8 @@
 const { call } = require("effects-as-data/core");
-const { cmds: coreCmds, handlers: coreHandlers } = require("effects-as-data");
 const {
-  handlers: universalHandlers,
-  cmds
-} = require("effects-as-data-universal");
+  cmds: coreCmds,
+  interpreters: coreInterpreters
+} = require("effects-as-data");
 const { send, notFound, notAuthorized } = require("./helpers");
 const bodyParser = require("koa-bodyparser");
 const cookie = require("koa-cookie").default;
@@ -20,8 +19,29 @@ function init(options) {
   if (!options.disableCookie) app.use(cookie(options.cookie));
   if (!options.disableBodyParser) app.use(bodyParser(options.bodyParser));
 
-  // Combine handlers
-  const handlers = Object.assign({}, coreHandlers, universalHandlers, options.handlers || {});
+  // Combine interpreters
+  const interpreters = Object.assign(
+    {},
+    coreInterpreters,
+    options.interpreters || {}
+  );
+
+  // Error handling
+  app.use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      if (options.onError) {
+        options.onError(err, err.context);
+      }
+      if (options.handleError) {
+        await options.handleError(ctx, next, err, err.context);
+      } else {
+        ctx.status = err.status || 500;
+        ctx.body = { message: err.message };
+      }
+    }
+  });
 
   // Mount middleware
   if (options.middleware) (options.middleware || []).forEach(m => app.use(m));
@@ -42,7 +62,13 @@ function init(options) {
       };
       let result;
       if (isGeneratorFunction(fn)) {
-        result = await call(options.config || {}, handlers, fn, args);
+        const context = options.context || {};
+        try {
+          result = await call(context, interpreters, fn, args);
+        } catch (e) {
+          e.context = context;
+          throw e;
+        }
       } else {
         result = await fn(args);
       }
@@ -100,7 +126,7 @@ function init(options) {
 }
 
 module.exports = {
-  cmds: Object.assign({}, coreCmds, cmds),
+  cmds: Object.assign({}, coreCmds),
   init,
   notAuthorized,
   notFound,

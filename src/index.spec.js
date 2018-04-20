@@ -1,5 +1,5 @@
 const { init, router, send, cmds } = require("./index");
-const { get, post, put, patch, remove } = require("./test-helpers");
+const { get, getError, post, put, patch, remove } = require("./test-helpers");
 
 test("it should handle a get request", async () => {
   function* testRoute({ query, params, body, headers, cookies }) {
@@ -219,4 +219,68 @@ test("it should support custom middleware", async () => {
   const result = await get("http://localhost:3000/anything");
   await stop();
   expect(result).toEqual({ message: "foo" });
+});
+
+test("it should handle errors", async () => {
+  function middleware(ctx) {
+    throw new Error("oops");
+  }
+  const { start, stop } = init({
+    port: 3000,
+    middleware: [middleware],
+    test: true // prevent printing of certain messages
+  });
+  await start();
+  const result = await getError("http://localhost:3000/anything");
+  await stop();
+  expect(result).toEqual({ message: "oops" });
+});
+
+test("it should use optional error handler", async () => {
+  function* die() {
+    throw new Error("oops");
+  }
+  const { start, stop } = init({
+    port: 3000,
+    routes: [router.get("/die", die)],
+    context: {
+      value: "foobar"
+    },
+    handleError: (ctx, next, err, context) => {
+      ctx.body = {
+        message: `${context.value} ${err.message}`
+      };
+    },
+    test: true // prevent printing of certain messages
+  });
+  await start();
+  const result = await getError("http://localhost:3000/die");
+  await stop();
+  expect(result).toEqual({ message: "foobar oops" });
+});
+
+test("it should report errors to onError", async () => {
+  function* die() {
+    throw new Error("oops");
+  }
+  let reportedError;
+  let reportedContext;
+  const { start, stop } = init({
+    port: 3000,
+    routes: [router.get("/die", die)],
+    context: {
+      value: "foobar"
+    },
+    onError: (err, context) => {
+      reportedError = err;
+      reportedContext = context;
+    },
+    test: true // prevent printing of certain messages
+  });
+  await start();
+  const result = await getError("http://localhost:3000/die");
+  await stop();
+  expect(reportedError.message).toEqual("oops");
+  expect(reportedContext.value).toEqual("foobar");
+  expect(result).toEqual({ message: "oops" });
 });

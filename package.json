@@ -1,6 +1,6 @@
 {
   "name": "effects-as-data-server",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A simple server for effects-as-data",
   "main": "src/index.js",
   "scripts": {
@@ -15,8 +15,7 @@
   "author": "orourkedd",
   "license": "MIT",
   "dependencies": {
-    "effects-as-data": "^3.0.7",
-    "effects-as-data-universal": "^5.0.0",
+    "effects-as-data": "^3.0.9",
     "is-generator-function": "^1.0.6",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",

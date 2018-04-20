@@ -20,6 +20,10 @@ function get(url, options = {}) {
     .then(parseJSON);
 }
 
+function getError(url, options = {}) {
+  return fetch(url, options).then(parseJSON);
+}
+
 function post(url, body, options = {}) {
   return fetch(
     url,
@@ -93,6 +97,7 @@ function remove(url, options = {}) {
 
 module.exports = {
   get,
+  getError,
   post,
   put,
   patch,
