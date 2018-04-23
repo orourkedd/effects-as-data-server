@@ -38,7 +38,7 @@ function init(options) {
         await options.handleError(ctx, next, err, err.context);
       } else {
         ctx.status = err.status || 500;
-        ctx.body = { message: err.message };
+        ctx.body = { message: err.message, stack: err.stack };
       }
     }
   });
