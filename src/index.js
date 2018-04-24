@@ -100,10 +100,10 @@ function init(options) {
 
   const start = () => {
     return new Promise((resolve, reject) => {
-      serverInstance = app.listen(options.port, (err, data) => {
+      const port = options.port || process.env.PORT;
+      serverInstance = app.listen(port, (err, data) => {
         if (err) return reject(err);
-        if (!options.test)
-          console.log(`Server Listening on Port ${options.port}`);
+        if (!options.test) console.log(`Server Listening on Port ${port}`);
         resolve();
       });
     });

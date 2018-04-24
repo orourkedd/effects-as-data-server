@@ -7,12 +7,12 @@ test("it should handle a get request", async () => {
     return send({ query, params, body, headers, cookies, message });
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.get("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await get("http://localhost:3000/test/32?a=1&b=2", {
+  const result = await get("http://localhost:9876/test/32?a=1&b=2", {
     headers: {
       Cookie: "foo=bar"
     }
@@ -26,7 +26,7 @@ test("it should handle a get request", async () => {
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({});
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -39,13 +39,13 @@ test("it should handle a put request", async () => {
     return send({ query, params, body, headers, cookies, message });
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.put("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
   const result = await put(
-    "http://localhost:3000/test/32?a=1&b=2",
+    "http://localhost:9876/test/32?a=1&b=2",
     { foo: "bar" },
     {
       headers: {
@@ -63,7 +63,7 @@ test("it should handle a put request", async () => {
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({ foo: "bar" });
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -76,13 +76,13 @@ test("it should handle a patch request", async () => {
     return send({ query, params, body, headers, cookies, message });
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.patch("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
   const result = await patch(
-    "http://localhost:3000/test/32?a=1&b=2",
+    "http://localhost:9876/test/32?a=1&b=2",
     { foo: "bar" },
     {
       headers: {
@@ -100,7 +100,7 @@ test("it should handle a patch request", async () => {
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({ foo: "bar" });
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -113,13 +113,13 @@ test("it should handle a post request", async () => {
     return send({ query, params, body, headers, cookies, message });
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.post("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
   const result = await post(
-    "http://localhost:3000/test/32?a=1&b=2",
+    "http://localhost:9876/test/32?a=1&b=2",
     { foo: "bar" },
     {
       headers: {
@@ -137,7 +137,7 @@ test("it should handle a post request", async () => {
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({ foo: "bar" });
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -150,12 +150,12 @@ test("it should handle a delete request", async () => {
     return send({ query, params, body, headers, cookies, message });
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.delete("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await remove("http://localhost:3000/test/32?a=1&b=2", {
+  const result = await remove("http://localhost:9876/test/32?a=1&b=2", {
     headers: {
       Cookie: "foo=bar"
     }
@@ -169,7 +169,7 @@ test("it should handle a delete request", async () => {
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({});
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -181,12 +181,12 @@ test("it should use a non EAD function which interacts directly with ctx", async
     ctx.body = { message: "foo bar", query, params, body, headers, cookies };
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.get("/test/:id", testRoute)],
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await get("http://localhost:3000/test/32?a=1&b=2", {
+  const result = await get("http://localhost:9876/test/32?a=1&b=2", {
     headers: {
       Cookie: "foo=bar"
     }
@@ -199,7 +199,7 @@ test("it should use a non EAD function which interacts directly with ctx", async
   });
   expect(result.params).toEqual({ id: "32" });
   expect(result.body).toEqual({});
-  expect(result.headers.host).toEqual("localhost:3000");
+  expect(result.headers.host).toEqual("localhost:9876");
   expect(result.headers.cookie).toEqual("foo=bar");
   expect(result.cookies).toEqual({
     foo: "bar"
@@ -211,29 +211,31 @@ test("it should support custom middleware", async () => {
     ctx.body = { message: "foo" };
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     middleware: [middleware],
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await get("http://localhost:3000/anything");
+  const result = await get("http://localhost:9876/anything");
   await stop();
   expect(result).toEqual({ message: "foo" });
 });
 
 test("it should handle errors", async () => {
+  let error;
   function middleware(ctx) {
-    throw new Error("oops");
+    error = new Error("oops");
+    throw error;
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     middleware: [middleware],
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await getError("http://localhost:3000/anything");
+  const result = await getError("http://localhost:9876/anything");
   await stop();
-  expect(result).toEqual({ message: "oops" });
+  expect(result).toEqual({ message: "oops", stack: error.stack });
 });
 
 test("it should use optional error handler", async () => {
@@ -241,7 +243,7 @@ test("it should use optional error handler", async () => {
     throw new Error("oops");
   }
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.get("/die", die)],
     context: {
       value: "foobar"
@@ -254,19 +256,21 @@ test("it should use optional error handler", async () => {
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await getError("http://localhost:3000/die");
+  const result = await getError("http://localhost:9876/die");
   await stop();
   expect(result).toEqual({ message: "foobar oops" });
 });
 
 test("it should report errors to onError", async () => {
+  let error;
   function* die() {
-    throw new Error("oops");
+    error = new Error("oops");
+    throw error;
   }
   let reportedError;
   let reportedContext;
   const { start, stop } = init({
-    port: 3000,
+    port: 9876,
     routes: [router.get("/die", die)],
     context: {
       value: "foobar"
@@ -278,9 +282,9 @@ test("it should report errors to onError", async () => {
     test: true // prevent printing of certain messages
   });
   await start();
-  const result = await getError("http://localhost:3000/die");
+  const result = await getError("http://localhost:9876/die");
   await stop();
   expect(reportedError.message).toEqual("oops");
   expect(reportedContext.value).toEqual("foobar");
-  expect(result).toEqual({ message: "oops" });
+  expect(result).toEqual({ message: "oops", stack: error.stack });
 });
