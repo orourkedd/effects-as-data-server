@@ -84,7 +84,11 @@ function init(options) {
       }
 
       ctx.status = result.status || 200;
-      ctx.headers = result.headers || ctx.headers;
+      if (result.headers) {
+        for (let i in result.headers) {
+          ctx.set(i, result.headers[i]);
+        }
+      }
       // set cookies
       for (let i = 0; i < (result.cookies || []).length; i++) {
         const [name, value, options] = result.cookies[i];
